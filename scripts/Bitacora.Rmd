@@ -1,0 +1,9 @@
+---
+title: "Bitacora - Proyecto"
+output: html_notebook
+---
+
+##Planteamiento del problema
+##Teoría
+##Prubeas de concepto
+###Scripts de ejemplo y resultados
