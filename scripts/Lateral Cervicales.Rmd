@@ -1,0 +1,68 @@
+---
+title: "PCA en Datos Médicos Matriciales"
+output: 
+  html_notebook: 
+    theme: readable
+    toc: yes
+author: Gener Avilés R
+---
+
+##Leyendo los datos
+```{r, message=FALSE, warning=FALSE}
+library(readr)
+img <- fread("~/GENER/TESIS/data/IMG2.txt")
+```
+##Construyendo una matriz de los datos obtenidos
+Se utiliza una matriz en vez de un *data.frame* para poder visualizar los resultados parciales y finales.
+```{r}
+matImg <- data.matrix(img, rownames.force = NA)
+image(t(matImg[nrow(matImg):1,]), col = gray(seq(1,0, length = 256)))
+```
+
+##Implementación del PCA
+
+###Preproceso
+####Removiendo pixeles constantes (variabilidad nula o ménima)
+
+**Pendiente implementar ésta seccién**
+
+###Implementacién del Algoritmo
+
+```{r, message=FALSE, warning=FALSE}
+PCA2 <- prcomp(img, with = F, center  = T, scale. = F)
+```
+####Evaluacién
+
+```{r}
+plot(cumsum(PCA2$sdev)/sum(PCA2$sdev)*100,
+     main = "Proporción Cumulativa de la Varianza Explicada",
+     xlab = "Cantidad de Componentes Principales",
+     ylab = "% De Varianza Explicada")
+```
+###Visualizacién del PCA
+
+####Proyeccién de los datos en el espacio de dimensiones generado por el PCA
+```{r}
+projected2 <- scale(img, PCA2$center, PCA2$scale) %*%
+  PCA2$rotation
+```
+####Visualizacién de los datos generados por el PCA
+```{r}
+##Keeping only three dimensions
+n_dim <- 100
+
+##Projecting the data back using only the n principal components
+coord_x2 <- data.table(img, projected2[,1:n_dim] %*%
+             t(PCA2$rotation)[1:n_dim,])
+
+##Plotting new image
+
+
+  matImg <- matrix(as.numeric(coord_x2[i, 2860:1,with = F]),
+                nrow = 52, ncol = 52, byrow = F)
+  
+  image(matImg)
+  
+
+```
+

@@ -1,0 +1,92 @@
+---
+title: "PCA en datos Matriciales"
+output: 
+  html_notebook: 
+    theme: readable
+    toc: yes
+author: Gener Avilés R
+---
+
+Éste ejercicio es una reproducción del tutorial de [Enhance Data Science para PCA con R](http://enhancedatascience.com/2017/05/07/r-basics-pca-r/).
+Los datos están tomados de la competencia en [Kaggle](https://www.kaggle.com/c/digit-recognizer/data) de *Digit Recognizer*.
+
+##Leyendo los datos.
+
+```{r, message=FALSE, warning=FALSE}
+require(data.table)
+mnist_data <- fread("C:/Users/Telemedicina/Documents/GENER/TESIS/data/MINST.csv")
+```
+
+##Construyendo un *grid* de 3x3
+
+```{r}
+par(mfrow = c(3,3))
+for (i in 1:9)
+{
+  ##Changing i-th row to matrix
+  mat <- matrix(as.numeric(mnist_data[i,785:2, with = F]), nrow = 28, ncol = 28, byrow = F)
+  
+  ##Inverting row order
+  mat <- mat[nrow(mat):1,]
+  
+  ##plot
+  image(mat, main = paste0("Éste es un ", mnist_data[i,1,with=F]), col = grey(seq(1, 0, length = 256)))
+}
+```
+##*Principal Components Analysis (PCA)* para reducción de dimensionalidad de los datos.
+
+Para el humano es relativamente sencillo reconocer patrones visuales, no obstante, desde el punto de vista de análisis de datos y procesamiento de los mismos, la cantidad de los mismos necesaria para representar la imagen anterior es significativa. Por ésta razón se vuelve relevante trabajar con la menor cantidad de datos posibles que nos sigan permietiendo obtener los resultados esperados, en el ejemplo anterior ésto sería el reconocer el número que está en la imagen. 
+Para lograr ésto se utilizan técnicas de reducción de dimensionalidad de los datos, en éste caso el algoritmo PCA.
+
+###Preproceso de los datos.
+
+####Removing constant pixels.
+
+El siguiente *script* muestra los pixeles que no tienen variabilidad en sus datos, como es de esperarse son los pixeles de los bordes. Por lo tanto hay que retirar los pixeles con valores constantes.
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+which(mnist_data[,sapply(.SD, FUN = function(x){min(x)==max(x)}), .SDcols= 2:ncol(mnist_data)])
+```
+El siguiente paso será el remover las celdas que están localizadas más cerca de un rango de 2 celdas de los bordes. Ésto removerá todos los pixeles constantes sin afectar significativamente a los dígitos.
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+mnist_data <- mnist_data[,-(which((1:784)%%28<= 2|(1:784)%%28>=26|1:784%/%28<=2|1:784%/%28>=26)+1),with=F]
+```
+
+###Implementando el Algoritmo
+
+```{r, message=FALSE, warning=FALSE}
+PCA1 <- prcomp(mnist_data[,(2:ncol(mnist_data)), with = F], center = T, scale. = F)
+```
+Once the calculation is done it is important to visualize the variances explained by the *n* amount of principal components.
+```{r}
+plot(cumsum(PCA1$sdev)/sum(PCA1$sdev)*100,
+     main = "Proporción Cumulativa de la Varianza Explicada",
+     xlab = "Cantidad de Componentes Principales",
+     ylab = "% De Varianza Explicada")
+```
+
+###Visualización del PCA
+En primer lugar se debe generar una proyección de los datos en el espacio (dimensiones) creados por el PCA.
+```{r}
+projected <- scale(mnist_data[,(2:ncol(mnist_data)), with=F], PCA1$center, PCA1$scale) %*%
+  PCA1$rotation
+```
+Regresando al espacio de pixeles con los datos generados por el PCA, utilizando los primeros 60 componentes principales:
+```{r}
+##Keeping only three dimensions
+n_dim <- 70
+
+##Projecting the data back using only the 3 principal components
+coord_x <- data.table(mnist_data$label, projected[,1:n_dim] %*%
+                        t(PCA1$rotation)[1:n_dim,])
+par(mfrow = c(7,7), mar = c(0.1,0.1,0.1,0.1))
+
+##Plotting 36 observations
+for (i in 1:49)
+{
+  mat <- matrix(as.numeric(coord_x[i, 530:2,with = F]),
+                nrow = 23, ncol = 23, byrow = F)
+  mat <- mat[nrow(mat):1,]
+  image(mat, main = paste0("Éste es un ", coord_x[i,1,with = F]), col = grey(seq(1, 0, length = 256)))
+}
+```
+

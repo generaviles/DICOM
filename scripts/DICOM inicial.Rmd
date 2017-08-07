@@ -1,0 +1,60 @@
+---
+title: "Aproximación Inicial a la Manipulación de Archivos DICOM"
+output: 
+  html_notebook: 
+    theme: readable
+    toc: yes
+author: Gener Avilés R
+---
+
+Para manipular archivos en el protocolo DICOM estaremos utilizando el paquete `oro.dicom`.
+
+##Leyendo los archivos inicialmente.
+```{r, message=FALSE, warning=FALSE}
+library(oro.dicom)
+dcmImg1.2 <- readDICOM("~/GENER/tesis/data/Paciente1/IMG2", verbose = TRUE, recursive = FALSE, exclude = "sql")
+dcmImg2.2 <- readDICOM("~/GENER/tesis/data/Paciente2/IMG2", verbose = TRUE, recursive = FALSE, exclude = "sql")
+dcmImg3.3 <- readDICOM("~/GENER/tesis/data/Paciente3/IMG3", verbose = TRUE, recursive = FALSE, exclude = "sql")
+dcmImg4.6 <- readDICOM("~/GENER/tesis/data/Paciente4/IMG6", verbose = TRUE, recursive = FALSE, exclude = "sql")
+dcmImg5.2 <- readDICOM("~/GENER/tesis/data/Paciente5/IMG2", verbose = TRUE, recursive = FALSE, exclude = "sql")
+```
+
+##Exploración Inicial de los Metadatos
+```{r}
+dcm.info <- dicomTable(dcmImg2$hdr)
+names(dcm.info)
+```
+
+###Tipo de Imagen
+```{r}
+unique(dcm.info["0008-0090-ReferringPhysiciansName"])
+```
+##Imagen
+```{r, fig.align='center', fig.height=5, fig.width=4, message=FALSE, warning=FALSE}
+par(mfrow = c(2,3))
+image(t(dcmImg1.2$img[[1]]),
+             col = grey(seq(1, 0, length = 256)),
+             axes = FALSE, xlab = "", ylab = "",
+             main = "Paciente 1")
+image(t(dcmImg2.2$img[[1]]),
+             col = grey(seq(1, 0, length = 256)),
+             axes = FALSE, xlab = "", ylab = "",
+             main = "Paciente 2")
+image(t(dcmImg3.3$img[[1]]),
+             col = grey(seq(1, 0, length = 256)),
+             axes = FALSE, xlab = "", ylab = "",
+             main = "Paciente 3")
+image(t(dcmImg4.6$img[[1]]),
+      col = grey(seq(1, 0, length = 256)),
+      axes = FALSE, xlab = "", ylab = "",
+      main = "Paciente 4")
+image(t(dcmImg5.2$img[[1]]),
+      col = grey(seq(1, 0, length = 256)),
+      axes = FALSE, xlab = "", ylab = "",
+      main = "Paciente 5")
+```
+
+##PENDIENTES
+
+ - Saber cómo proyectar la imagen manteniendo las proporciones originales.
+ - Reduccián de dimensionalidad en quá fase del PDI?
