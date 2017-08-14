@@ -1,9 +1,23 @@
 ---
-title: "Bitacora - Proyecto"
-output: html_notebook
+title: "Bitacora - TraumaTron"
+output: 
+  html_notebook: 
+    theme: readable
+    toc: yes
+author: Avilés, Gener; González, Ricardo.
+bibliography: references.bib
 ---
 
 ##Planteamiento del problema
+El proceso de interpretación de imágenes médicas, en concreto las proyecciones obtenidas por rayos x en el contexto de patologías traumatológicas, es una actividad que depende principalmente de la apreciación del clínico.
+El volumen de pacientes atendidos en la consulta promedio de traumatología reduce el tiempo que el clínico puede dedicarle al análisis detallado de las placas.
+Ésta realidad motivó la exploración de las posibilidades de automatización del proceso de análisis de placas óseas por rayos x, en particular las proyecciones laterales de columna cervical.
+El uso de aproximaciones de aprendizaje automatizado e inteligencia artificial para el análisis de rayos x es un tema de actual interés, como lo podemos ver en los trabajos de @lakhani2017 y @Le2011.
+En éste proyecto nos aproximamos al problema con las estrategias de:
+
+- **Procesamiento Digital de Imágenes** para la identificación de estructuras óseas y medición de ángulos y relaciones,
+- **Reducción de Dimensionalidad** para transformar los datos de imágenes en protocolo DICOM (*Digital Imaging and Communications in Medicine*) a un conjunto de datos con menos dimensiones.
+- **Algoritmos de Aprendizaje Automatizado** para la clasificación (diagnóstico) de los datos, una vez procesados, con el objetivo de que el resultado final sea accesible a los clínicos.
 
 
 ##Teoría
@@ -26,3 +40,5 @@ Notar que $c(X_{L-1}) = 1$ en el rango dinámico $(X_0,X_{L-1})$. Se define una 
 
 ##Prubeas de concepto
 ###Scripts de ejemplo y resultados
+
+##Referencias
