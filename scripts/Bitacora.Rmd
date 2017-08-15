@@ -37,8 +37,26 @@ c(X) =\sum_{j=0}^{k} p(X_j)
 
 Notar que $c(X_{L-1}) = 1$ en el rango dinámico $(X_0,X_{L-1})$. Se define una función de transformación $f(x)$, basada en la función de densidad acumulada como:
 
+$$
+\begin{equation}
+f(x) = X_0 + (X_{L-1} - X_0) c(X)
+\end{equation}
+$$
+$$
+\begin{equation}
+Y(i,j) = c[X(i,j)] \cdot \frac{L-1}{n}
+\end{equation}
+$$
+
+###Ecualización Bi-histograma por preservación de brillo (BBHE)
+
+Este método divide el histograma de la imagen en 2 partes. El valor de seperación es el valor promedio de intensidad en la imagen de entrada. Luego de esta separación cada histograma son ecualizados independientes.
 
 ##Prubeas de concepto
+
 ###Scripts de ejemplo y resultados
+
+###Notas
+
 
 ##Referencias
